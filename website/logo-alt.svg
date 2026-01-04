@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <defs>
+    <linearGradient id="logoGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa"/>
+      <stop offset="50%" style="stop-color:#a78bfa"/>
+      <stop offset="100%" style="stop-color:#f472b6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- SF Monogram in hexagon -->
+  <g transform="translate(5, 3)">
+    <!-- Hexagon background -->
+    <polygon points="22,0 44,12 44,36 22,48 0,36 0,12" fill="none" stroke="url(#logoGradient2)" stroke-width="2"/>
+    <!-- S letter -->
+    <path d="M14 16 Q14 12 18 12 L26 12 Q30 12 30 16 Q30 20 26 20 L18 20 Q14 20 14 24 Q14 28 18 28 L26 28 Q30 28 30 32" 
+          fill="none" stroke="url(#logoGradient2)" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Flow arrow -->
+    <path d="M32 22 L38 22 M36 19 L39 22 L36 25" fill="none" stroke="url(#logoGradient2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- SpecFlow Text -->
+  <text x="55" y="33" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="700">
+    <tspan fill="#ffffff">Spec</tspan><tspan fill="url(#logoGradient2)">Flow</tspan>
+  </text>
+</svg>
