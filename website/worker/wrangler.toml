@@ -1,0 +1,15 @@
+name = "specflow-contact-worker"
+type = "javascript"
+# Replace with your Cloudflare Account ID
+account_id = "ef6774d6586084637f20c8d63c1ab2d7"
+workers_dev = true
+
+# To route the worker to a custom domain after publishing, add a route entry in the Cloudflare dashboard
+# example:
+# route = "specflow.tech/api/contact"
+
+## KV namespace binding
+## Create a KV namespace and replace the id below, or run the `wrangler kv:namespace create` command
+[[kv_namespaces]]
+binding = "CONTACTS_KV"
+id = "37d563af608b4ada8c7a6aeb408d4f59"

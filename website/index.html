@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SpecFlow — Door hardware specs & sales (Phoenix / Scottsdale)</title>
+    <meta name="description" content="SpecFlow: custom door hardware specs and sales serving Phoenix & Scottsdale. Build, estimate, and order quality door hardware." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <meta name="theme-color" content="#2563eb" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/">
+          <div class="logo">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="4" fill="url(#logoGrad)" />
+              <path d="M7 12h10M7 8h10M7 16h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="logoGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#3b82f6"/>
+                  <stop offset="1" stop-color="#1d4ed8"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="title">SpecFlow</span>
+        </a>
+        <nav class="nav">
+          <a href="#how">How it works</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
+          <a class="cta" href="http://localhost:5173">
+            <span>Try Builder</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </nav>
+        <button class="mobile-menu" aria-label="Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="wrap hero-content">
+          <div class="hero-text">
+            <div class="badge">🏠 Serving Phoenix & Scottsdale</div>
+            <h1>Precision Door Hardware<br><span class="gradient-text">Built to Spec</span></h1>
+            <p class="lead">Design and order custom door hardware with instant estimates, expert guidance, and fast local delivery. Commercial & residential projects welcome.</p>
+            <div class="actions">
+              <a class="btn-primary" href="http://localhost:5173">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+                Start Building
+              </a>
+              <a class="btn-secondary" href="#contact">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Get a Quote
+              </a>
+            </div>
+            <div class="trust-badges">
+              <div class="trust-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>Licensed & Insured</span>
+              </div>
+              <div class="trust-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Fast Turnaround</span>
+              </div>
+              <div class="trust-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span>5-Star Service</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="hero-card">
+              <div class="card-header">
+                <div class="card-dot"></div>
+                <div class="card-dot"></div>
+                <div class="card-dot"></div>
+              </div>
+              <div class="card-body">
+                <div class="spec-row">
+                  <span class="spec-label">Door Size</span>
+                  <span class="spec-value">36" × 80"</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">Material</span>
+                  <span class="spec-value">Solid Wood</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-label">Hardware</span>
+                  <span class="spec-value">Premium Set</span>
+                </div>
+                <div class="spec-divider"></div>
+                <div class="spec-total">
+                  <span>Estimated Total</span>
+                  <span class="price">$1,235<sup>.00</sup></span>
+                </div>
+              </div>
+              <div class="card-cta">
+                <span>Ready in 3-5 business days</span>
+              </div>
+            </div>
+            <div class="floating-badge badge-1">⚡ Instant Quotes</div>
+            <div class="floating-badge badge-2">🚚 Local Delivery</div>
+          </div>
+        </div>
+        <div class="hero-wave">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="#ffffff" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path></svg>
+        </div>
+      </section>
+
+      <section id="how" class="section-how">
+        <div class="wrap">
+          <div class="section-header">
+            <span class="section-tag">Simple Process</span>
+            <h2>How It Works</h2>
+            <p>From concept to delivery in three easy steps</p>
+          </div>
+          <div class="steps-grid">
+            <article class="step-card">
+              <div class="step-number">1</div>
+              <div class="step-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              </div>
+              <h3>Build Your Spec</h3>
+              <p>Use our interactive builder to configure door dimensions, materials, hardware, and finishes exactly how you need them.</p>
+            </article>
+            <div class="step-connector">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <article class="step-card">
+              <div class="step-number">2</div>
+              <div class="step-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <h3>Get Your Estimate</h3>
+              <p>Receive an instant, transparent price quote with detailed breakdowns and accurate lead times for your project.</p>
+            </article>
+            <div class="step-connector">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <article class="step-card">
+              <div class="step-number">3</div>
+              <div class="step-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5a2 2 0 0 1-2 2h-1M6 19a2 2 0 1 0 4 0M14 19a2 2 0 1 0 4 0"/></svg>
+              </div>
+              <h3>Order & Deliver</h3>
+              <p>Place your order online or with our team. Enjoy fast local pickup or delivery across the Phoenix metro area.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" class="section-services">
+        <div class="wrap">
+          <div class="section-header">
+            <span class="section-tag">What We Offer</span>
+            <h2>Our Services</h2>
+            <p>Complete door hardware solutions for every project</p>
+          </div>
+          <div class="services-grid">
+            <div class="service-card featured">
+              <div class="service-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <h3>Custom Hardware Specs</h3>
+              <p>Doors, hinges, locksets, closers, and finishes — tailored to your project requirements and building codes. We handle complex commercial specs with ease.</p>
+              <ul class="service-features">
+                <li>ADA compliant options</li>
+                <li>Fire-rated hardware</li>
+                <li>Code consultation</li>
+              </ul>
+            </div>
+            <div class="service-card">
+              <div class="service-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5a2 2 0 0 1-2 2h-1M6 19a2 2 0 1 0 4 0M14 19a2 2 0 1 0 4 0"/></svg>
+              </div>
+              <h3>Local Delivery</h3>
+              <p>Fast, reliable delivery across Phoenix and Scottsdale. Same-week availability for in-stock items.</p>
+              <ul class="service-features">
+                <li>Phoenix metro coverage</li>
+                <li>Tracked shipments</li>
+                <li>Jobsite delivery</li>
+              </ul>
+            </div>
+            <div class="service-card">
+              <div class="service-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <h3>Commercial & Residential</h3>
+              <p>From single-family homes to multi-building developments — we scale to meet your project needs.</p>
+              <ul class="service-features">
+                <li>Volume pricing</li>
+                <li>Project management</li>
+                <li>Contractor accounts</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section-contact">
+        <div class="wrap">
+          <div class="contact-container">
+            <div class="contact-info">
+              <span class="section-tag">Get In Touch</span>
+              <h2>Let's Talk About Your Project</h2>
+              <p>Questions, custom quotes, or ready to order? We're here to help and respond quickly during business hours.</p>
+              
+              <div class="contact-methods">
+                <a href="mailto:Matt@SpecFlow.Tech" class="contact-method">
+                  <div class="method-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div>
+                    <strong>Email</strong>
+                    <span>Matt@SpecFlow.Tech</span>
+                  </div>
+                </a>
+                <a href="tel:+14802437837" class="contact-method">
+                  <div class="method-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </div>
+                  <div>
+                    <strong>Phone</strong>
+                    <span>(480) 243-7837</span>
+                  </div>
+                </a>
+                <div class="contact-method">
+                  <div class="method-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>
+                  <div>
+                    <strong>Service Area</strong>
+                    <span>Phoenix & Scottsdale, AZ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="contact-form-wrapper">
+              <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                  <label for="name">Your Name</label>
+                  <input id="name" name="name" placeholder="John Smith" required>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <input id="email" name="email" type="email" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                  <label for="message">How can we help?</label>
+                  <textarea id="message" name="message" rows="4" placeholder="Tell us about your project..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">
+                  <span>Send Message</span>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+                <div id="contact-result" class="form-result"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <a class="brand" href="/">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="4" fill="url(#logoGrad2)" />
+                <path d="M7 12h10M7 8h10M7 16h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="logoGrad2" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#3b82f6"/>
+                    <stop offset="1" stop-color="#1d4ed8"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span>SpecFlow</span>
+            </a>
+            <p>Custom door hardware specs and sales for Phoenix & Scottsdale contractors and homeowners.</p>
+          </div>
+          <div class="footer-links">
+            <div class="footer-col">
+              <h4>Quick Links</h4>
+              <a href="#how">How It Works</a>
+              <a href="#services">Services</a>
+              <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-col">
+              <h4>Tools</h4>
+              <a href="/frontend/index.html">Door Builder</a>
+              <a href="/admin/">Admin Portal</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <small>© <span id="year"></span> SpecFlow. All rights reserved. Serving Phoenix & Scottsdale, Arizona.</small>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Contact form handler — posts JSON to /api/contact
+      const form = document.getElementById('contact-form')
+      const result = document.getElementById('contact-result')
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        result.textContent = 'Sending...'
+        result.className = 'form-result sending'
+        const payload = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          message: document.getElementById('message').value
+        }
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          })
+          if (res.ok) {
+            result.className = 'form-result success'
+            result.textContent = '✓ Message sent — thank you! We\'ll be in touch soon.'
+            form.reset()
+          } else {
+            const j = await res.json().catch(() => ({}))
+            result.className = 'form-result error'
+            result.textContent = j.error || 'Failed to send message.'
+          }
+        } catch (err) {
+          result.className = 'form-result error'
+          result.textContent = 'Network error — try again later.'
+        }
+      })
+
+      // Mobile menu toggle
+      const mobileMenu = document.querySelector('.mobile-menu')
+      const nav = document.querySelector('.nav')
+      mobileMenu?.addEventListener('click', () => {
+        nav.classList.toggle('open')
+      })
+
+      // Smooth scroll
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault()
+          const target = document.querySelector(this.getAttribute('href'))
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            nav.classList.remove('open')
+          }
+        })
+      })
+
+      // Header scroll effect
+      const header = document.querySelector('.site-header')
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled')
+        } else {
+          header.classList.remove('scrolled')
+        }
+      })
+    </script>
+  </body>
+</html>

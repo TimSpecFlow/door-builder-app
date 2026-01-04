@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SpecFlow Admin - Messages</title>
+    <link rel="stylesheet" href="admin.css">
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="admin-header">
+        <h1>SpecFlow Admin</h1>
+        <div class="token">
+          <label>Admin token</label>
+          <input id="token-input" placeholder="Paste ADMIN_TOKEN here" />
+          <button id="save-token">Save</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="controls">
+          <button id="refresh">Refresh Messages</button>
+        </section>
+
+        <section class="content">
+          <aside class="list">
+            <ul id="messages-list"></ul>
+          </aside>
+          <section class="detail" id="detail">
+            <div id="detail-inner">Select a message to view details</div>
+          </section>
+        </section>
+      </main>
+
+      <footer class="admin-footer">
+        <small>Admin UI — messages stored in Cloudflare KV. Keep your token private.</small>
+      </footer>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

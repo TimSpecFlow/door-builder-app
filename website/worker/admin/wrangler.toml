@@ -1,0 +1,9 @@
+name = "specflow-contact-admin"
+type = "javascript"
+# Replace with your Cloudflare Account ID
+account_id = "ef6774d6586084637f20c8d63c1ab2d7"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "CONTACTS_KV"
+id = "37d563af608b4ada8c7a6aeb408d4f59"
