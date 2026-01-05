@@ -475,3 +475,144 @@ class GenerateQuotePDFView(APIView):
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class SaveToCRMView(APIView):
+    """
+    Save door specification project to Excel CRM file.
+    """
+
+    def post(self, request):
+        from datetime import datetime
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        import os
+        
+        try:
+            specs = request.data.get('specs', {})
+            estimate = request.data.get('estimate')
+            breakdown = request.data.get('breakdown', {})
+            
+            # Define CRM file path
+            crm_file = os.path.join(os.path.dirname(__file__), '..', 'crm_projects.xlsx')
+            
+            # Create or load workbook
+            if os.path.exists(crm_file):
+                wb = openpyxl.load_workbook(crm_file)
+                ws = wb.active
+            else:
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = "Projects"
+                
+                # Create header row
+                headers = [
+                    'Date Added', 'Project ID', 'Door Type', 'Material', 'Width', 'Height',
+                    'Thickness', 'Panel Style', 'Hardware Count', 'Fire Rating', 'Finish',
+                    'Internal Estimate', 'Door Cost', 'Hardware Cost', 'Status', 'Customer Price',
+                    'Specifications Summary'
+                ]
+                
+                for col, header in enumerate(headers, 1):
+                    cell = ws.cell(row=1, column=col)
+                    cell.value = header
+                    cell.font = Font(bold=True, color="FFFFFF")
+                    cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+                    cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+                
+                # Set column widths
+                ws.column_dimensions['A'].width = 12
+                ws.column_dimensions['B'].width = 12
+                ws.column_dimensions['C'].width = 15
+                ws.column_dimensions['D'].width = 12
+                ws.column_dimensions['E'].width = 8
+                ws.column_dimensions['F'].width = 8
+                ws.column_dimensions['G'].width = 10
+                ws.column_dimensions['H'].width = 12
+                ws.column_dimensions['I'].width = 12
+                ws.column_dimensions['J'].width = 12
+                ws.column_dimensions['K'].width = 12
+                ws.column_dimensions['L'].width = 15
+                ws.column_dimensions['M'].width = 12
+                ws.column_dimensions['N'].width = 12
+                ws.column_dimensions['O'].width = 12
+                ws.column_dimensions['P'].width = 15
+                ws.column_dimensions['Q'].width = 40
+            
+            # Generate project ID
+            from uuid import uuid4
+            project_id = str(uuid4())[:8].upper()
+            
+            # Prepare data row
+            row_data = [
+                datetime.now().strftime('%Y-%m-%d %H:%M'),  # Date Added
+                project_id,  # Project ID
+                specs.get('doorType', ''),  # Door Type
+                specs.get('material', ''),  # Material
+                specs.get('width', ''),  # Width
+                specs.get('height', ''),  # Height
+                specs.get('thickness', ''),  # Thickness
+                specs.get('panelStyle', ''),  # Panel Style
+                len([h for h in specs.get('hardware', []) if h]),  # Hardware Count
+                specs.get('fireRating', 'None'),  # Fire Rating
+                specs.get('finish', ''),  # Finish
+                f"${estimate:,.2f}" if estimate else "TBD",  # Internal Estimate
+                breakdown.get('door_material', 0),  # Door Cost
+                breakdown.get('hardware_total', 0),  # Hardware Cost
+                "Quote Generated",  # Status
+                "",  # Customer Price (to be filled manually)
+                self._format_specs_summary(specs)  # Specifications Summary
+            ]
+            
+            # Add row to worksheet
+            next_row = ws.max_row + 1
+            for col, value in enumerate(row_data, 1):
+                cell = ws.cell(row=next_row, column=col)
+                cell.value = value
+                cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+                cell.border = Border(
+                    left=Side(style='thin'),
+                    right=Side(style='thin'),
+                    top=Side(style='thin'),
+                    bottom=Side(style='thin')
+                )
+                
+                # Format numeric cells
+                if col in [5, 6, 7, 8, 9, 12, 13, 14]:  # Numeric columns
+                    cell.alignment = Alignment(horizontal="center", vertical="center")
+            
+            # Save workbook
+            wb.save(crm_file)
+            
+            return Response({
+                'success': True,
+                'message': 'Project saved to CRM',
+                'project_id': project_id
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to save to CRM: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def _format_specs_summary(self, specs):
+        """Format specifications into a summary string."""
+        summary_parts = []
+        
+        if specs.get('doorType'):
+            summary_parts.append(f"Type: {specs['doorType'].title()}")
+        if specs.get('material'):
+            summary_parts.append(f"Material: {specs['material'].title()}")
+        if specs.get('panelStyle'):
+            summary_parts.append(f"Style: {specs['panelStyle'].title()}")
+        if specs.get('hasGlass'):
+            summary_parts.append(f"Glass: {specs.get('glassType', 'Clear').title()} {specs.get('litePattern', '').title()}")
+        if specs.get('hardware'):
+            hardware_list = ', '.join([h.replace('_', ' ').title() for h in specs['hardware'][:3]])
+            if len(specs['hardware']) > 3:
+                hardware_list += f", +{len(specs['hardware'])-3} more"
+            summary_parts.append(f"Hardware: {hardware_list}")
+        
+        return "; ".join(summary_parts)
+

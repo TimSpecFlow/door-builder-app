@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     EstimateView, ParseMeasurementsView, ProductRecommendationsView, 
-    DistributorsView, GenerateQuotePDFView
+    DistributorsView, GenerateQuotePDFView, SaveToCRMView
 )
 
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     path('recommendations/', ProductRecommendationsView.as_view(), name='product-recommendations'),
     path('distributors/', DistributorsView.as_view(), name='distributors'),
     path('generate-quote/', GenerateQuotePDFView.as_view(), name='generate-quote'),
+    path('save-to-crm/', SaveToCRMView.as_view(), name='save-to-crm'),
 ]

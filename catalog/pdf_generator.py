@@ -159,6 +159,21 @@ class QuoteGenerator:
         """Build the header section with company info."""
         elements = []
         
+        # Internal use only banner
+        from reportlab.lib.styles import ParagraphStyle
+        warning_style = ParagraphStyle(
+            'InternalWarning',
+            parent=self.styles['Normal'],
+            fontSize=11,
+            textColor=colors.HexColor('#dc2626'),
+            fontName='Helvetica-Bold',
+            alignment=TA_CENTER,
+            spaceAfter=12
+        )
+        elements.append(Paragraph("⚠ INTERNAL USE ONLY - DO NOT SHARE WITH CUSTOMER", warning_style))
+        elements.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor('#dc2626')))
+        elements.append(Spacer(1, 0.1*inch))
+        
         # Company name and tagline
         elements.append(Paragraph(self.COMPANY_NAME, self.styles['CompanyName']))
         elements.append(Paragraph(self.COMPANY_TAGLINE, self.styles['Tagline']))
@@ -284,7 +299,10 @@ class QuoteGenerator:
         """Build the pricing breakdown section."""
         elements = []
         
-        elements.append(Paragraph("Pricing Breakdown", self.styles['SectionHeader']))
+        elements.append(Spacer(1, 0.2*inch))
+        elements.append(Paragraph("Internal Cost Estimate", self.styles['SectionHeader']))
+        elements.append(Paragraph("<i>For internal use only. Customer pricing to be determined separately.</i>", 
+                                self.styles['Normal']))
         
         breakdown = estimate.get('breakdown', {})
         

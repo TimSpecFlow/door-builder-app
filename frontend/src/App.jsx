@@ -249,7 +249,7 @@ export default function App() {
     }
   }
 
-  // Generate PDF Quote
+  // Generate PDF Quote and Save to CRM
   async function downloadQuote() {
     setGeneratingPdf(true)
     setError(null)
@@ -308,6 +308,18 @@ export default function App() {
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
+
+      // Save to CRM (Excel)
+      await fetch('/api/save-to-crm/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          specs,
+          estimate: estimate,
+          breakdown: estimateBreakdown || {}
+        })
+      })
+
     } catch (err) {
       setError('Failed to generate PDF: ' + err.message)
     } finally {
@@ -868,9 +880,7 @@ export default function App() {
       )}
 
       <div className="estimate">
-        {loading ? (<div className="muted">Calculating...</div>) : error ? (<div className="error">{error}</div>) : (
-          <div className="price">Estimate: {estimate != null ? `$${estimate.toLocaleString()}` : '—'}</div>
-        )}
+        {loading ? (<div className="muted">Processing specifications...</div>) : error ? (<div className="error">{error}</div>) : null}
       </div>
 
       {/* Action Buttons */}
@@ -919,11 +929,11 @@ export default function App() {
                     <line x1="12" y1="18" x2="12" y2="12"/>
                     <polyline points="9 15 12 18 15 15"/>
                   </svg>
-                  Download Quote PDF
+                  Generate Internal Quote
                 </>
               )}
             </button>
-            <span className="quote-hint">Get a professional quote document</span>
+            <span className="quote-hint">Creates PDF and saves project to CRM</span>
           </div>
         )}
       </div>
