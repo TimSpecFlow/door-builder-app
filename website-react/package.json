@@ -1,6 +1,6 @@
 {
-  "name": "door-builder-frontend",
-  "version": "0.1.0",
+  "name": "specflow-landing",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "scripts": {
