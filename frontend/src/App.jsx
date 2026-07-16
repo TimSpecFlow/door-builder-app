@@ -93,6 +93,18 @@ export default function App() {
   // PDF Quote
   const [generatingPdf, setGeneratingPdf] = useState(false)
   
+  // Customer Info for CRM
+  const [customerInfo, setCustomerInfo] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    organization: '',
+    jobTitle: '',
+    projectName: ''
+  })
+  const [showCustomerForm, setShowCustomerForm] = useState(false)
+  
   // AI Upload states
   const [uploadMode, setUploadMode] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -110,6 +122,7 @@ export default function App() {
     hardwarePrep: false,
     hardwareSelection: true,
     finishing: false,
+    customerInfo: true,
     recommendations: true
   })
 
@@ -309,16 +322,30 @@ export default function App() {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
 
-      // Save to CRM (Excel)
-      await fetch('/api/save-to-crm/', {
+      // Save to CRM (SharePoint Excel)
+      const crmResponse = await fetch('/api/save-to-crm/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           specs,
           estimate: estimate,
-          breakdown: estimateBreakdown || {}
+          breakdown: estimateBreakdown || {},
+          customerInfo: customerInfo
         })
       })
+      
+      if (crmResponse.ok) {
+        // Clear customer form after successful save
+        setCustomerInfo({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          organization: '',
+          jobTitle: '',
+          projectName: ''
+        })
+      }
 
     } catch (err) {
       setError('Failed to generate PDF: ' + err.message)
@@ -823,6 +850,85 @@ export default function App() {
                 </div>
                 
                 <div className="hint">Select hardware to include in your quote. Prices from SecLock distributor catalog.</div>
+              </div>
+            )}
+          </section>
+
+          {/* Customer Info for CRM */}
+          <section className="form-section">
+            <SectionHeader id="customerInfo" title="Customer Information" icon="👤" />
+            {expandedSections.customerInfo && (
+              <div className="section-content">
+                <div className="row-grid">
+                  <div className="field">
+                    <label>First Name</label>
+                    <input 
+                      type="text" 
+                      value={customerInfo.firstName} 
+                      onChange={e => setCustomerInfo({...customerInfo, firstName: e.target.value})} 
+                      placeholder="John" 
+                    />
+                  </div>
+                  <div className="field">
+                    <label>Last Name</label>
+                    <input 
+                      type="text" 
+                      value={customerInfo.lastName} 
+                      onChange={e => setCustomerInfo({...customerInfo, lastName: e.target.value})} 
+                      placeholder="Smith" 
+                    />
+                  </div>
+                </div>
+                <div className="row-grid">
+                  <div className="field">
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      value={customerInfo.email} 
+                      onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})} 
+                      placeholder="john@company.com" 
+                    />
+                  </div>
+                  <div className="field">
+                    <label>Phone</label>
+                    <input 
+                      type="tel" 
+                      value={customerInfo.phone} 
+                      onChange={e => setCustomerInfo({...customerInfo, phone: e.target.value})} 
+                      placeholder="555-123-4567" 
+                    />
+                  </div>
+                </div>
+                <div className="row-grid">
+                  <div className="field">
+                    <label>Organization</label>
+                    <input 
+                      type="text" 
+                      value={customerInfo.organization} 
+                      onChange={e => setCustomerInfo({...customerInfo, organization: e.target.value})} 
+                      placeholder="Company Name" 
+                    />
+                  </div>
+                  <div className="field">
+                    <label>Job Title</label>
+                    <input 
+                      type="text" 
+                      value={customerInfo.jobTitle} 
+                      onChange={e => setCustomerInfo({...customerInfo, jobTitle: e.target.value})} 
+                      placeholder="Project Manager" 
+                    />
+                  </div>
+                </div>
+                <div className="field">
+                  <label>Project Name</label>
+                  <input 
+                    type="text" 
+                    value={customerInfo.projectName} 
+                    onChange={e => setCustomerInfo({...customerInfo, projectName: e.target.value})} 
+                    placeholder="Office Building Renovation" 
+                  />
+                </div>
+                <div className="hint">Customer info will be saved to your CRM when generating a quote.</div>
               </div>
             )}
           </section>

@@ -479,114 +479,177 @@ class GenerateQuotePDFView(APIView):
 
 class SaveToCRMView(APIView):
     """
-    Save door specification project to Excel CRM file.
+    Save door specification project to SharePoint Online Excel CRM via Microsoft Graph API.
+    
+    Required environment variables:
+    - AZURE_TENANT_ID: Your Azure AD tenant ID
+    - AZURE_CLIENT_ID: App registration client ID
+    - AZURE_CLIENT_SECRET: App registration client secret
+    - SHAREPOINT_SITE_ID: SharePoint site ID (or leave empty for OneDrive personal)
+    - SHAREPOINT_DRIVE_ID: Drive ID containing the Excel file
+    - SHAREPOINT_FILE_PATH: Path to the Excel file (e.g., /personal/matt_specflow_tech/Documents/Excel CRM Preferred Option.xlsx)
     """
 
+    def get_access_token(self):
+        """Get Microsoft Graph API access token using client credentials flow."""
+        import requests
+        import os
+        
+        tenant_id = os.environ.get('AZURE_TENANT_ID', '')
+        client_id = os.environ.get('AZURE_CLIENT_ID', '')
+        client_secret = os.environ.get('AZURE_CLIENT_SECRET', '')
+        
+        if not all([tenant_id, client_id, client_secret]):
+            raise ValueError("Azure AD credentials not configured. Please set AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET environment variables.")
+        
+        token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+        
+        response = requests.post(token_url, data={
+            'grant_type': 'client_credentials',
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'scope': 'https://graph.microsoft.com/.default'
+        })
+        
+        if response.status_code != 200:
+            raise ValueError(f"Failed to get access token: {response.text}")
+        
+        return response.json()['access_token']
+
+    def append_to_excel(self, access_token, row_data):
+        """Append a row to the SharePoint Excel file using Microsoft Graph API."""
+        import requests
+        import os
+        
+        drive_id = os.environ.get('SHAREPOINT_DRIVE_ID', '')
+        file_path = os.environ.get('SHAREPOINT_FILE_PATH', '')
+        table_name = os.environ.get('SHAREPOINT_TABLE_NAME', 'Table1')  # Excel table name
+        
+        if not all([drive_id, file_path]):
+            raise ValueError("SharePoint file configuration not set. Please set SHAREPOINT_DRIVE_ID and SHAREPOINT_FILE_PATH environment variables.")
+        
+        # Microsoft Graph API endpoint for adding rows to Excel table
+        # Using the workbook sessions for better performance
+        graph_url = f"https://graph.microsoft.com/v1.0/drives/{drive_id}/root:{file_path}:/workbook/tables/{table_name}/rows/add"
+        
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        }
+        
+        # The row data must be in a 2D array format for Excel API
+        payload = {
+            'values': [row_data]
+        }
+        
+        response = requests.post(graph_url, headers=headers, json=payload)
+        
+        if response.status_code not in [200, 201]:
+            # If table approach fails, try direct cell append
+            return self.append_to_worksheet(access_token, row_data)
+        
+        return response.json()
+
+    def append_to_worksheet(self, access_token, row_data):
+        """Fallback: Append row directly to worksheet if no table exists."""
+        import requests
+        import os
+        
+        drive_id = os.environ.get('SHAREPOINT_DRIVE_ID', '')
+        file_path = os.environ.get('SHAREPOINT_FILE_PATH', '')
+        worksheet_name = os.environ.get('SHAREPOINT_WORKSHEET_NAME', 'Sheet1')
+        
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        }
+        
+        # First, get the used range to find the next empty row
+        range_url = f"https://graph.microsoft.com/v1.0/drives/{drive_id}/root:{file_path}:/workbook/worksheets/{worksheet_name}/usedRange"
+        range_response = requests.get(range_url, headers=headers)
+        
+        if range_response.status_code == 200:
+            used_range = range_response.json()
+            # Calculate next row number
+            next_row = used_range.get('rowCount', 0) + 1
+        else:
+            next_row = 2  # Assume row 1 has headers
+        
+        # Update the cells in the next row
+        # Convert column number to Excel letter (A, B, C, etc.)
+        last_col = chr(ord('A') + len(row_data) - 1)
+        cell_range = f"A{next_row}:{last_col}{next_row}"
+        
+        update_url = f"https://graph.microsoft.com/v1.0/drives/{drive_id}/root:{file_path}:/workbook/worksheets/{worksheet_name}/range(address='{cell_range}')"
+        
+        payload = {
+            'values': [row_data]
+        }
+        
+        response = requests.patch(update_url, headers=headers, json=payload)
+        
+        if response.status_code not in [200, 201]:
+            raise ValueError(f"Failed to append to Excel: {response.text}")
+        
+        return response.json()
+
     def post(self, request):
-        from datetime import datetime
-        import openpyxl
-        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from datetime import datetime, timedelta
         import os
         
         try:
             specs = request.data.get('specs', {})
             estimate = request.data.get('estimate')
             breakdown = request.data.get('breakdown', {})
-            
-            # Define CRM file path
-            crm_file = os.path.join(os.path.dirname(__file__), '..', 'crm_projects.xlsx')
-            
-            # Create or load workbook
-            if os.path.exists(crm_file):
-                wb = openpyxl.load_workbook(crm_file)
-                ws = wb.active
-            else:
-                wb = openpyxl.Workbook()
-                ws = wb.active
-                ws.title = "Projects"
-                
-                # Create header row
-                headers = [
-                    'Date Added', 'Project ID', 'Door Type', 'Material', 'Width', 'Height',
-                    'Thickness', 'Panel Style', 'Hardware Count', 'Fire Rating', 'Finish',
-                    'Internal Estimate', 'Door Cost', 'Hardware Cost', 'Status', 'Customer Price',
-                    'Specifications Summary'
-                ]
-                
-                for col, header in enumerate(headers, 1):
-                    cell = ws.cell(row=1, column=col)
-                    cell.value = header
-                    cell.font = Font(bold=True, color="FFFFFF")
-                    cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
-                    cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-                
-                # Set column widths
-                ws.column_dimensions['A'].width = 12
-                ws.column_dimensions['B'].width = 12
-                ws.column_dimensions['C'].width = 15
-                ws.column_dimensions['D'].width = 12
-                ws.column_dimensions['E'].width = 8
-                ws.column_dimensions['F'].width = 8
-                ws.column_dimensions['G'].width = 10
-                ws.column_dimensions['H'].width = 12
-                ws.column_dimensions['I'].width = 12
-                ws.column_dimensions['J'].width = 12
-                ws.column_dimensions['K'].width = 12
-                ws.column_dimensions['L'].width = 15
-                ws.column_dimensions['M'].width = 12
-                ws.column_dimensions['N'].width = 12
-                ws.column_dimensions['O'].width = 12
-                ws.column_dimensions['P'].width = 15
-                ws.column_dimensions['Q'].width = 40
+            customer_info = request.data.get('customerInfo', {})
             
             # Generate project ID
             from uuid import uuid4
             project_id = str(uuid4())[:8].upper()
             
-            # Prepare data row
+            # Calculate due date (30 days from now)
+            due_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+            
+            # Format project value
+            project_value = f"${estimate:,.2f}" if estimate else "$0.00"
+            
+            # Build project name from customer info or specs
+            project_name = customer_info.get('projectName', '')
+            if not project_name:
+                project_name = f"{specs.get('doorType', 'Door')} - {specs.get('material', 'Custom')}"
+            
+            # Prepare row data matching CRM columns:
+            # Due Date, Next Action, Status, Project Name, Project Value, Project Stage,
+            # First Name, Last Name, Job Title, Phone, Email address, Organization
             row_data = [
-                datetime.now().strftime('%Y-%m-%d %H:%M'),  # Date Added
-                project_id,  # Project ID
-                specs.get('doorType', ''),  # Door Type
-                specs.get('material', ''),  # Material
-                specs.get('width', ''),  # Width
-                specs.get('height', ''),  # Height
-                specs.get('thickness', ''),  # Thickness
-                specs.get('panelStyle', ''),  # Panel Style
-                len([h for h in specs.get('hardware', []) if h]),  # Hardware Count
-                specs.get('fireRating', 'None'),  # Fire Rating
-                specs.get('finish', ''),  # Finish
-                f"${estimate:,.2f}" if estimate else "TBD",  # Internal Estimate
-                breakdown.get('door_material', 0),  # Door Cost
-                breakdown.get('hardware_total', 0),  # Hardware Cost
+                due_date,  # Due Date
+                "Follow up on quote",  # Next Action
                 "Quote Generated",  # Status
-                "",  # Customer Price (to be filled manually)
-                self._format_specs_summary(specs)  # Specifications Summary
+                project_name,  # Project Name
+                project_value,  # Project Value
+                "Quote",  # Project Stage
+                customer_info.get('firstName', ''),  # First Name
+                customer_info.get('lastName', ''),  # Last Name
+                customer_info.get('jobTitle', ''),  # Job Title
+                customer_info.get('phone', ''),  # Phone
+                customer_info.get('email', ''),  # Email address
+                customer_info.get('organization', ''),  # Organization
             ]
             
-            # Add row to worksheet
-            next_row = ws.max_row + 1
-            for col, value in enumerate(row_data, 1):
-                cell = ws.cell(row=next_row, column=col)
-                cell.value = value
-                cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
-                cell.border = Border(
-                    left=Side(style='thin'),
-                    right=Side(style='thin'),
-                    top=Side(style='thin'),
-                    bottom=Side(style='thin')
-                )
-                
-                # Format numeric cells
-                if col in [5, 6, 7, 8, 9, 12, 13, 14]:  # Numeric columns
-                    cell.alignment = Alignment(horizontal="center", vertical="center")
-            
-            # Save workbook
-            wb.save(crm_file)
+            # Check if Graph API is configured
+            if os.environ.get('AZURE_CLIENT_ID'):
+                # Use SharePoint Excel via Graph API
+                access_token = self.get_access_token()
+                self.append_to_excel(access_token, row_data)
+                message = 'Project saved to SharePoint CRM'
+            else:
+                # Fallback to local Excel file
+                self._save_to_local_excel(specs, estimate, breakdown, customer_info, project_id)
+                message = 'Project saved to local CRM (SharePoint not configured)'
             
             return Response({
                 'success': True,
-                'message': 'Project saved to CRM',
+                'message': message,
                 'project_id': project_id
             }, status=status.HTTP_201_CREATED)
             
@@ -595,6 +658,80 @@ class SaveToCRMView(APIView):
                 {'error': f'Failed to save to CRM: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+    def _save_to_local_excel(self, specs, estimate, breakdown, customer_info, project_id):
+        """Fallback: Save to local Excel file if SharePoint not configured."""
+        from datetime import datetime, timedelta
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        import os
+        
+        crm_file = os.path.join(os.path.dirname(__file__), '..', 'crm_projects.xlsx')
+        
+        # Create or load workbook
+        if os.path.exists(crm_file):
+            wb = openpyxl.load_workbook(crm_file)
+            ws = wb.active
+        else:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "Projects"
+            
+            # Create header row matching SharePoint CRM columns
+            headers = [
+                'Due Date', 'Next Action', 'Status', 'Project Name', 'Project Value',
+                'Project Stage', 'First Name', 'Last Name', 'Job Title', 'Phone',
+                'Email address', 'Organization'
+            ]
+            
+            for col, header in enumerate(headers, 1):
+                cell = ws.cell(row=1, column=col)
+                cell.value = header
+                cell.font = Font(bold=True, color="FFFFFF")
+                cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+                cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        
+        # Calculate due date
+        due_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+        
+        # Format project value
+        project_value = f"${estimate:,.2f}" if estimate else "$0.00"
+        
+        # Build project name
+        project_name = customer_info.get('projectName', '')
+        if not project_name:
+            project_name = f"{specs.get('doorType', 'Door')} - {specs.get('material', 'Custom')}"
+        
+        # Prepare data row
+        row_data = [
+            due_date,  # Due Date
+            "Follow up on quote",  # Next Action
+            "Quote Generated",  # Status
+            project_name,  # Project Name
+            project_value,  # Project Value
+            "Quote",  # Project Stage
+            customer_info.get('firstName', ''),  # First Name
+            customer_info.get('lastName', ''),  # Last Name
+            customer_info.get('jobTitle', ''),  # Job Title
+            customer_info.get('phone', ''),  # Phone
+            customer_info.get('email', ''),  # Email address
+            customer_info.get('organization', ''),  # Organization
+        ]
+        
+        # Add row to worksheet
+        next_row = ws.max_row + 1
+        for col, value in enumerate(row_data, 1):
+            cell = ws.cell(row=next_row, column=col)
+            cell.value = value
+            cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+            cell.border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+        
+        wb.save(crm_file)
     
     def _format_specs_summary(self, specs):
         """Format specifications into a summary string."""
