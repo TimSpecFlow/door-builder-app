@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, MotionConfig } from 'framer-motion';
 import { 
   Moon, Sun, Menu, X, Star, CheckCircle, Clock, Users, 
   Mail, Phone, MapPin, ArrowRight, ChevronDown 
 } from 'lucide-react';
+
+// ============================================
+// CONFIG
+// ============================================
+
+// Configurable at build time (see .env / .env.example). Falls back to local dev values.
+const DOOR_BUILDER_URL = import.meta.env.VITE_DOOR_BUILDER_URL || 'http://localhost:5174';
+const CONTACT_ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT || '/api/contact';
 
 // ============================================
 // HOOKS
@@ -151,6 +159,8 @@ const ServiceCard = ({ image, title, description, link, delay = 0 }) => {
         <motion.img
           src={image}
           alt={title}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover"
           animate={{ scale: isHovered ? 1.08 : 1 }}
           transition={{ duration: 0.6 }}
@@ -210,6 +220,8 @@ const PortfolioItem = ({ image, category, title, span = '' }) => {
       <motion.img
         src={image}
         alt={title}
+        loading="lazy"
+        decoding="async"
         className="w-full h-full object-cover"
         animate={{ scale: isHovered ? 1.1 : 1 }}
         transition={{ duration: 0.6 }}
@@ -286,7 +298,7 @@ export default function App() {
     e.preventDefault();
     setFormStatus('sending');
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -348,6 +360,7 @@ export default function App() {
   ];
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300">
       
       {/* ============================================ */}
@@ -367,10 +380,10 @@ export default function App() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <a href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-10 h-10 bg-accent-800 rounded-md ring-1 ring-primary-500/25 flex items-center justify-center text-primary-500 font-serif font-semibold text-base tracking-tight">
                 SF
               </div>
-              <span className={`font-semibold text-xl transition-colors ${
+              <span className={`font-serif font-semibold text-xl transition-colors ${
                 isScrolled ? 'text-gray-900 dark:text-white' : 'text-white'
               }`}>
                 SpecFlow
@@ -432,7 +445,7 @@ export default function App() {
 
               {/* CTA Button */}
               <motion.a
-                href="http://localhost:5174"
+                href={DOOR_BUILDER_URL}
                 className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -476,7 +489,7 @@ export default function App() {
                   </a>
                 ))}
                 <a
-                  href="http://localhost:5174"
+                  href={DOOR_BUILDER_URL}
                   className="block w-full text-center px-5 py-2.5 bg-primary-600 text-white font-medium rounded-lg mt-4"
                 >
                   Door Builder
@@ -546,7 +559,7 @@ export default function App() {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.a
-              href="http://localhost:5174"
+              href={DOOR_BUILDER_URL}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -682,6 +695,8 @@ export default function App() {
               <img
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=1000&fit=crop"
                 alt="Quality craftsmanship"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-auto rounded-2xl shadow-2xl"
               />
               
@@ -728,7 +743,7 @@ export default function App() {
             Let's create something extraordinary together. Get started with our interactive door builder.
           </motion.p>
           <motion.a
-            href="http://localhost:5174"
+            href={DOOR_BUILDER_URL}
             className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -900,10 +915,10 @@ export default function App() {
             {/* Brand */}
             <div className="md:col-span-2">
               <a href="/" className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                <div className="w-10 h-10 bg-accent-800 rounded-md ring-1 ring-primary-500/25 flex items-center justify-center text-primary-500 font-serif font-semibold text-base tracking-tight">
                   SF
                 </div>
-                <span className="font-semibold text-xl text-white">SpecFlow</span>
+                <span className="font-serif font-semibold text-xl text-white">SpecFlow</span>
               </a>
               <p className="text-gray-400 max-w-sm leading-relaxed">
                 Premium door solutions for homes and businesses throughout the Phoenix metropolitan area.
@@ -930,7 +945,7 @@ export default function App() {
             <div>
               <h4 className="text-white font-semibold mb-4">Tools</h4>
               <div className="space-y-3">
-                <a href="http://localhost:5174" className="block text-gray-400 hover:text-primary-400 transition-colors">
+                <a href={DOOR_BUILDER_URL} className="block text-gray-400 hover:text-primary-400 transition-colors">
                   Door Builder
                 </a>
                 <a href="/admin/" className="block text-gray-400 hover:text-primary-400 transition-colors">
@@ -951,5 +966,6 @@ export default function App() {
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 }
